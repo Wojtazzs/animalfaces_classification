@@ -104,7 +104,7 @@ def test_single_image(filename: str, model: object, image_width=100, visualizati
     if visualization:
         image_reduced, image_original = extract_features_from_image(image, visualization=True)
         label = model.predict(image_reduced.reshape(1, -1))
-        plt.imshow(image_original)
+        plt.imshow(image)
         plt.title(label)
         plt.show()
         return label
