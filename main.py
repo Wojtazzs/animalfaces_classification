@@ -19,19 +19,15 @@ x_img = np.zeros(len(images))
 
 # 3. Feature extraction =======================================================
 print("Step 3: Extracting features..")
+percent = len(images) // 10
 for iter, image in enumerate(images):
-    val, image = hog(
-        image, 
-        cells_per_block=(3, 3), 
-        pixels_per_cell=(8, 8), 
-        visualize=True
-        )
+    val, image = func.extract_features_from_image(image, visualization=True)
     
     if iter == 0:
         x_img = np.zeros((len(images), val.shape[0]))
-    if iter == 502:
-        plt.imshow(image)
-        plt.title(f"{y_data[iter]}")
+
+    if iter % percent == 0:
+        print(f"    Progress: {iter/len(images)*100}%")
 
     x_img[iter] = val
 #==============================================================================

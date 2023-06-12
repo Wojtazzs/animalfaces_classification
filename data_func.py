@@ -7,13 +7,28 @@ from skimage.feature import hog
 from sklearn.metrics import confusion_matrix
 from sklearn import svm
 import pickle
-from typing import Tuple
-from typing import Union
+import matplotlib as mpl
+
 
 def image_resize_to_grayscale(img_path: str, new_width: int) -> np.ndarray:
     img = Image.open(img_path).convert('L')
     new_img = img.resize((new_width, new_width))
     return np.array(new_img)
+
+
+def rename_images_to_folder_name(dir_path: str, resize_size=100) -> None:
+    for root,  folders, _ in os.walk(f"{dir_path}"):
+        for folder in folders:
+            file_number = 0
+            for file in os.listdir(f"{root}/{folder}"):    
+                if file == ".DS_Store":
+                    continue            
+                path = f"{root}/{folder}/{file}"
+
+                extension = file.split(".")[-1].lower()
+                file_number += 1
+                # Renaming the files to the format: folder_number.extension
+                os.rename(path, f"{root}/{folder}/{folder}_{file_number}.{extension}")
 
 
 def load_images_to_dict(dir_path: str, resize_size=100) -> dict:
@@ -34,11 +49,6 @@ def load_images_to_dict(dir_path: str, resize_size=100) -> dict:
                 images['name'].append(file_name)
                 images['label'].append(folder)
 
-                # extension = file.split(".")[-1].lower()
-                # file_number += 1
-                # Renaming the files to the format: folder_number.extension
-                # os.rename(path, f"{root}/{folder}/{folder}_{file_number}.{extension}")
-
     return images
 
 
@@ -55,6 +65,7 @@ def divide_image_to_blocks(img: np.ndarray, block_size: int) -> np.ndarray:
     #return blocks
     return blocks_black
 
+
 def save_model(model: object, filename: str) -> None:
     with open(filename, "wb") as file:
         pickle.dump(model, file)
@@ -64,6 +75,7 @@ def load_model(filename: str) -> object:
     with open(filename, "rb") as file:
         model = pickle.load(file)
     return model
+
 
 def extract_features_from_images(image_dict: dict) -> dict:
     for iter, image in enumerate(image_dict):
@@ -102,9 +114,10 @@ def extract_features_from_image(image: Image, visualization=False):
 def test_single_image(filename: str, model: object, image_width=100, visualization=False):
     image = image_resize_to_grayscale(filename, image_width)
     if visualization:
+        original = Image.open(filename)
         image_reduced, image_original = extract_features_from_image(image, visualization=True)
         label = model.predict(image_reduced.reshape(1, -1))
-        plt.imshow(image)
+        plt.imshow(original)
         plt.title(label)
         plt.show()
         return label
@@ -112,6 +125,7 @@ def test_single_image(filename: str, model: object, image_width=100, visualizati
         image_reduced = extract_features_from_image(image, visualization=False)
         label = model.predict(image_reduced.reshape(1, -1))
         return label
+
 
 #4 rzeczy
 #jakaś definicja
