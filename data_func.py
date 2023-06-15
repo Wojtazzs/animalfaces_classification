@@ -126,8 +126,3 @@ def test_single_image(filename: str, model: object, image_width=100, visualizati
         label = model.predict(image_reduced.reshape(1, -1))
         return label
 
-
-#4 rzeczy
-#jakaś definicja
-#jakiś algorytm
-#jakiś dowówd
