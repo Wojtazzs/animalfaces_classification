@@ -77,7 +77,8 @@ def load_model(filename: str) -> object:
     return model
 
 
-def extract_features_from_images(image_dict: dict) -> dict:
+def extract_features_from_images(image_dict: dict):
+    img_reduced = np.zeros((1, 1))
     for iter, image in enumerate(image_dict):
         val, image = hog(
             image, 
@@ -93,7 +94,7 @@ def extract_features_from_images(image_dict: dict) -> dict:
     return img_reduced
 
 
-def extract_features_from_image(image: Image, visualization=False):
+def extract_features_from_image(image, visualization=False):
     if visualization:
         image_reduced, visualization = hog(
             image, 
@@ -111,23 +112,34 @@ def extract_features_from_image(image: Image, visualization=False):
         return image_reduced
 
 
-def test_single_image(filename: str, model: object, image_width=100, visualization=False):
+def test_single_image(filename: str, model, image_width=100, visualization=False) -> None:
     image = image_resize_to_grayscale(filename, image_width)
+    image_reduced, image_original = extract_features_from_image(image, visualization=True)
+    label = model.predict(image_reduced.reshape(1, -1))
     if visualization:
         original = Image.open(filename)
-        image_reduced, image_original = extract_features_from_image(image, visualization=True)
-        label = model.predict(image_reduced.reshape(1, -1))
+        original = np.array(original)
         plt.imshow(original)
         plt.title(label)
         plt.show()
         return label
     else:
-        image_reduced = extract_features_from_image(image, visualization=False)
-        label = model.predict(image_reduced.reshape(1, -1))
         return label
 
 
-#4 rzeczy
-#jakaś definicja
-#jakiś algorytm
-#jakiś dowówd
+def plot_image_changes(filename: str, model) -> None:
+    img = Image.open(filename).resize((100, 100))
+    img_grayscale = img.copy().convert('L')
+    img = np.array(img)
+    img_grayscale = np.array(img_grayscale)
+    image_reduced, visualization = extract_features_from_image(img_grayscale.copy(), visualization=True)
+    label = model.predict(image_reduced.reshape(1, -1))
+    fig, ax = plt.subplots(ncols=2, nrows=2)
+    plt.title(label)
+    ax[0][0].imshow(img)
+    ax[1][0].imshow(img_grayscale)
+    ax[0][1].imshow(visualization)
+    ax[1][1].imshow(image_reduced.reshape(int(len(image_reduced)**0.5), int(len(image_reduced)**0.5)))
+    plt.show()
+
+
