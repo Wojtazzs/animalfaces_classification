@@ -4,5 +4,5 @@ images
 __pycache__
 Sprawozdanie.docx
 test.py
-test_img.jpg
 ~$rawozdanie.docx
+*.pdf

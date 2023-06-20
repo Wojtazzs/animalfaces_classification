@@ -126,3 +126,17 @@ def test_single_image(filename: str, model, image_width=100, visualization=False
     else:
         return label
 
+def plot_image_changes(filename: str, model) -> None:
+    img = Image.open(filename).resize((100, 100))
+    img_grayscale = img.copy().convert('L')
+    img = np.array(img)
+    img_grayscale = np.array(img_grayscale)
+    image_reduced, visualization = extract_features_from_image(img_grayscale.copy(), visualization=True)
+    label = model.predict(image_reduced.reshape(1, -1))
+    fig, ax = plt.subplots(ncols=2, nrows=2)
+    plt.title(label)
+    ax[0][0].imshow(img)
+    ax[1][0].imshow(img_grayscale)
+    ax[0][1].imshow(visualization)
+    ax[1][1].imshow(image_reduced.reshape(int(len(image_reduced)**0.5), int(len(image_reduced)**0.5)))
+    plt.show()

@@ -9,4 +9,4 @@ svc_m = func.load_model("model.svc")
 #print(func.test_single_image(filename="test_img.jpg", model=svc_m, visualization=False))
 
 # Example of how to plot the changes of the image to see the feature extraction
-#func.plot_image_changes("test_img.jpg", model=svc_m)
+func.plot_image_changes("test_img.jpg", model=svc_m)
